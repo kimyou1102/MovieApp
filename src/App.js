@@ -9,7 +9,7 @@ function App() {
         <Route exact path="/hello">
           <h1>Hello</h1>
         </Route>
-        <Route exact path="/movie">
+        <Route exact path="/movie/:id">
           <Detail />
         </Route>
         <Route exact path="/">
