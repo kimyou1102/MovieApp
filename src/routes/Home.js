@@ -1,41 +1,168 @@
 import { useEffect, useState} from "react";
+import { Link } from "react-router-dom";
 import Movie from "../components/Movie";
+import styles from "../Home.module.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+
+function LoadingAnimation() {
+  return(
+    <div className={styles.loading}></div>
+  )
+}
+
+function Nav({genre, setGenre}) {
+  const onClick = (event) => {
+    if(event.target.tagName === 'LI') {
+      setGenre(event.target.innerText);
+    } 
+  }
+  return(
+    <div>
+      <ul onClick={onClick}>
+        <li className={styles.categoryBtn}>Action</li>
+        <li className={styles.categoryBtn}>Adventure</li>
+        <li className={styles.categoryBtn}>Animation</li>
+        <li className={styles.categoryBtn}>Biography</li>
+        <li className={styles.categoryBtn}>Comedy</li>
+        <li className={styles.categoryBtn}>Crime</li>
+        <li className={styles.categoryBtn}>Documentary</li>
+        <li className={styles.categoryBtn}>Drama</li>
+        <li className={styles.categoryBtn}>Family</li>
+        <li className={styles.categoryBtn}>Fantasy</li>
+        <li className={styles.categoryBtn}>Film Noir</li>
+        <li className={styles.categoryBtn}>History</li>
+        <li className={styles.categoryBtn}>Horror</li>
+        <li className={styles.categoryBtn}>Music</li>
+        <li className={styles.categoryBtn}>Musical</li>
+        <li className={styles.categoryBtn}>Mystery</li>
+        <li className={styles.categoryBtn}>Romance</li>
+        <li className={styles.categoryBtn}>Sci-Fi</li>
+        <li className={styles.categoryBtn}>Short Film</li>
+        <li className={styles.categoryBtn}>Sport</li>
+        <li className={styles.categoryBtn}>Superhero</li>
+        <li className={styles.categoryBtn}>Thriller</li>
+        <li className={styles.categoryBtn}>War</li>
+        <li className={styles.categoryBtn}>Western</li>
+      </ul>
+    </div>
+  )
+}
+
+function FilterMovie({movies, genre, setModalMode, setPreviewImgSrc, setPreviewTitle, setMovieId, setCoordinate}) {
+  const filteredMovies = movies.filter(movie => movie.genres.includes(genre));
+  return(
+    <div className={styles.filteredWrap}>
+      {filteredMovies.length === 0 ? <h2 className={styles.noneInfo}>해당하는 장르의 영화는 없습니다.</h2> 
+      : <h2 className={styles.count}>({filteredMovies.length})</h2>}
+      <div className={styles.wrap}>
+        {filteredMovies.map(movie => (
+        <Movie
+            key={movie.id}
+            id={movie.id}
+            coverImg={movie.medium_cover_image}
+            genres={movie.genres}
+            setModalMode = {setModalMode}
+            setPreviewImgSrc = {setPreviewImgSrc}
+            setPreviewTitle = {setPreviewTitle}
+            setCoordinate = {setCoordinate}
+            setMovieId = {setMovieId}
+        />
+        ))}
+      </div>
+    </div>
+    
+  )
+}
+
+//setModalMode로 없애고 생성하고 하면될듯
+function Modal({id, src, title}) {
+  const [show, setShow] = useState('none');
+  const iconMouseOver = () => {
+    setShow('block');
+  }
+
+  const onMouseOver = (event) => {
+    if(show === 'block' && event.target.tagName !== 'IMG' && event.target.tagName !== 'A') {
+      console.log(event.target);
+      setShow('none');
+    }
+  }
+  return(
+    <div className={styles.previewModal}>
+      <img className={styles.previewModal_img} src={src} />
+      <div onMouseOver={onMouseOver} className={styles.previewModal_infoWrap}>
+        <h3 className={styles.previewModal_title}>{title}</h3>
+        <div onMouseOver={iconMouseOver} className={styles.previewModal_infoIconWrap}>
+          <Link to={`/movie/${id}`}><img className={styles.previewModal_infoIcon} src="info.png"/></Link>
+          <span className={styles.previewModal_infoText} style={{display: show}}>View Details</span>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function Home() {
-    const [loading, setLoading] = useState(true);
-    const [movies, setMovies] = useState([]);
-    const getMovies = async () => {
-      const json = await (
-        await fetch(
-          `https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year`
-        )
-      ).json();
-      console.log(json.data.movies);
-      setMovies(json.data.movies);
-      setLoading(false);
-    };
-    useEffect(() => {
-      getMovies();
-    }, []);
-  
-    return (
-      <div>
-        {loading ? <h1>Loading...</h1> : 
-        <div>
-          {movies.map((movie) => (
-            <Movie
-              key={movie.id}
-              id={movie.id}
-              coverImg={movie.medium_cover_image}
-              title={movie.title}
-              summary={movie.summary}
-              genres={movie.genres}
-            />
-          ))}
-        </div>
-        }
+  const [loading, setLoading] = useState(true);
+  const [movies, setMovies] = useState([]);
+  const [genre, setGenre] = useState('');
+  const [modalMode, setModalMode] = useState(false);
+  const [previewTitle, setPreviewTitle] = useState('');
+  const [previewImgSrc, setPreviewImgSrc] = useState('');
+  const [movieId, setMovieId] =  useState('');
+  const [coordinate, setCoordinate] = useState([]);
+
+  const onMouseOver = (event) => {
+    // setShow('block');
+    let target = event.target;
+  }
+  console.log(previewImgSrc);
+  console.log(previewTitle);
+  console.log(movieId);
+  const getMovies = async () => {
+    const json = await (
+      await fetch(
+        `https://yts.mx/api/v2/list_movies.json?minimum_rating=8&sort_by=download_count&limit=50`
+      )
+    ).json();
+    console.log(json.data.movies);
+    setMovies(json.data.movies);
+    setLoading(false);
+  };
+  useEffect(() => {
+    getMovies();
+  }, []);
+  return (
+    <div>
+      <FontAwesomeIcon icon={faChevronRight} className={styles.icon}/>
+      <Nav genre={genre} setGenre={setGenre}/>
+      {loading ? <LoadingAnimation />:
+      genre === '' ? 
+      <div className={styles.wrap} onMouseOver={onMouseOver}>
+        {movies.map((movie) => (
+          <Movie 
+            key={movie.id}
+            id={movie.id}
+            title={movie.title}
+            coverImg={movie.medium_cover_image}
+            genres={movie.genres}
+            setModalMode = {setModalMode}
+            setPreviewImgSrc = {setPreviewImgSrc}
+            setPreviewTitle = {setPreviewTitle}
+            setMovieId = {setMovieId}
+            setCoordinate = {setCoordinate}
+          />
+      ))} 
+      <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]}px`}}>
+        {modalMode ? <Modal src={previewImgSrc} id={movieId} title={previewTitle} coordinate={coordinate} /> : null}
       </div>
-    );
+      </div>
+      : <FilterMovie movies={movies} genre={genre}/>  
+      }
+    </div>
+  );
 }
 
 export default Home; 
+
+// {modalMode ? <Modal img={img} title={title} /> : null}

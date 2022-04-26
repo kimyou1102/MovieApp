@@ -1,15 +1,10 @@
-a {
-    text-decoration: none;
+.poster {
+    width: 180px;
+    height: 270px;
+    border-radius: 10px;
 }
 
-a:visited, a:link {
-    color: black;
-}
-
-.more {
-    cursor: pointer;
-}
-
-.more:hover {
-    border-bottom: 1px solid blue;
+.div {
+    position: relative;
+    margin: 5px 5px;
 }
