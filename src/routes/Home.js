@@ -15,11 +15,12 @@ function Nav({genre, setGenre}) {
   const onClick = (event) => {
     if(event.target.tagName === 'LI') {
       setGenre(event.target.innerText);
-    } 
+    }
   }
   return(
     <div>
       <ul onClick={onClick}>
+        <li className={styles.categoryBtn}>All</li>
         <li className={styles.categoryBtn}>Action</li>
         <li className={styles.categoryBtn}>Adventure</li>
         <li className={styles.categoryBtn}>Animation</li>
@@ -49,8 +50,11 @@ function Nav({genre, setGenre}) {
   )
 }
 
-function FilterMovie({movies, genre, setModalMode, setPreviewImgSrc, setPreviewTitle, setMovieId, setCoordinate}) {
+function FilterMovie({movies, genre, modalMode, setModalMode, previewImgSrc, setPreviewImgSrc, previewTitle, setPreviewTitle, movieId, setMovieId, coordinate, setCoordinate}) {
   const filteredMovies = movies.filter(movie => movie.genres.includes(genre));
+  console.log(previewImgSrc);
+  console.log(previewTitle);
+  console.log(movieId);
   return(
     <div className={styles.filteredWrap}>
       {filteredMovies.length === 0 ? <h2 className={styles.noneInfo}>해당하는 장르의 영화는 없습니다.</h2> 
@@ -60,22 +64,26 @@ function FilterMovie({movies, genre, setModalMode, setPreviewImgSrc, setPreviewT
         <Movie
             key={movie.id}
             id={movie.id}
+            title={movie.title}
             coverImg={movie.medium_cover_image}
             genres={movie.genres}
             setModalMode = {setModalMode}
+            previewTitle = {previewTitle}
             setPreviewImgSrc = {setPreviewImgSrc}
             setPreviewTitle = {setPreviewTitle}
             setCoordinate = {setCoordinate}
             setMovieId = {setMovieId}
         />
         ))}
+        <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]-247.625}px`}}>
+          {modalMode ? <Modal src={previewImgSrc} id={movieId} title={previewTitle} /> : null}
+        </div>
       </div>
     </div>
     
   )
 }
 
-//setModalMode로 없애고 생성하고 하면될듯
 function Modal({id, src, title}) {
   const [show, setShow] = useState('none');
   const iconMouseOver = () => {
@@ -105,7 +113,7 @@ function Modal({id, src, title}) {
 function Home() {
   const [loading, setLoading] = useState(true);
   const [movies, setMovies] = useState([]);
-  const [genre, setGenre] = useState('');
+  const [genre, setGenre] = useState('All');
   const [modalMode, setModalMode] = useState(false);
   const [previewTitle, setPreviewTitle] = useState('');
   const [previewImgSrc, setPreviewImgSrc] = useState('');
@@ -113,19 +121,19 @@ function Home() {
   const [coordinate, setCoordinate] = useState([]);
 
   const onMouseOver = (event) => {
-    // setShow('block');
-    let target = event.target;
+    if(modalMode && !event.target.className.includes('previewModal') && !event.target.className.includes('poster')) {
+      setModalMode(false);
+    }
   }
-  console.log(previewImgSrc);
+
   console.log(previewTitle);
-  console.log(movieId);
   const getMovies = async () => {
     const json = await (
       await fetch(
         `https://yts.mx/api/v2/list_movies.json?minimum_rating=8&sort_by=download_count&limit=50`
       )
     ).json();
-    console.log(json.data.movies);
+    // console.log(json.data.movies);
     setMovies(json.data.movies);
     setLoading(false);
   };
@@ -133,11 +141,10 @@ function Home() {
     getMovies();
   }, []);
   return (
-    <div>
-      <FontAwesomeIcon icon={faChevronRight} className={styles.icon}/>
+    <div onMouseOver={onMouseOver} className="HomeComponent">
       <Nav genre={genre} setGenre={setGenre}/>
       {loading ? <LoadingAnimation />:
-      genre === '' ? 
+      genre === 'All' ?
       <div className={styles.wrap} onMouseOver={onMouseOver}>
         {movies.map((movie) => (
           <Movie 
@@ -148,16 +155,30 @@ function Home() {
             genres={movie.genres}
             setModalMode = {setModalMode}
             setPreviewImgSrc = {setPreviewImgSrc}
+            previewTitle = {previewTitle}
             setPreviewTitle = {setPreviewTitle}
             setMovieId = {setMovieId}
             setCoordinate = {setCoordinate}
           />
       ))} 
-      <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]}px`}}>
-        {modalMode ? <Modal src={previewImgSrc} id={movieId} title={previewTitle} coordinate={coordinate} /> : null}
+        <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]-213.40000915527344}px`}}>
+          {modalMode ? <Modal src={previewImgSrc} id={movieId} title={previewTitle} /> : null}
+        </div>
       </div>
-      </div>
-      : <FilterMovie movies={movies} genre={genre}/>  
+      : <FilterMovie 
+          movies={movies} 
+          genre={genre} 
+          modalMode={modalMode}
+          setModalMode={setModalMode}
+          previewImgSrc={previewImgSrc}
+          setPreviewImgSrc={setPreviewImgSrc}
+          previewTitle={previewTitle}
+          setPreviewTitle={setPreviewTitle}
+          movieId={movieId}
+          setMovieId={setMovieId}
+          coordinate={coordinate}
+          setCoordinate={setCoordinate} 
+        />  
       }
     </div>
   );
@@ -165,4 +186,101 @@ function Home() {
 
 export default Home; 
 
-// {modalMode ? <Modal img={img} title={title} /> : null}
+
+
+// function AllMovie({movies, genre, modalMode, setModalMode, previewImgSrc, setPreviewImgSrc, previewTitle, setPreviewTitle, movieId, setMovieId, coordinate, setCoordinate}) {
+//   return(
+//     <div className={styles.wrap}>
+//       {movies.map((movie) => (
+//         <Movie 
+//           key={movie.id}
+//           id={movie.id}
+//           title={movie.title}
+//           coverImg={movie.medium_cover_image}
+//           genres={movie.genres}
+//           setModalMode = {setModalMode}
+//           setPreviewImgSrc = {setPreviewImgSrc}
+//           previewTitle = {previewTitle}
+//           setPreviewTitle = {setPreviewTitle}
+//           setMovieId = {setMovieId}
+//           setCoordinate = {setCoordinate}
+//         />
+//     ))} 
+//       <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]-213.40000915527344}px`}}>
+//         {modalMode ? <Modal src={previewImgSrc} id={movieId} title={previewTitle} /> : null}
+//       </div>
+//     </div>
+//   )
+// }
+
+// function Home() {
+//   const [loading, setLoading] = useState(true);
+//   const [movies, setMovies] = useState([]);
+//   const [genre, setGenre] = useState('All');
+//   const [modalMode, setModalMode] = useState(false);
+//   const [previewTitle, setPreviewTitle] = useState('');
+//   const [previewImgSrc, setPreviewImgSrc] = useState('');
+//   const [movieId, setMovieId] =  useState('');
+//   const [coordinate, setCoordinate] = useState([]);
+
+//   const onMouseOver = (event) => {
+//     if(modalMode && !event.target.className.includes('previewModal') && !event.target.className.includes('poster')) {
+//       setModalMode(false);
+//     }
+//   }
+
+//   console.log(previewTitle);
+//   const getMovies = async () => {
+//     const json = await (
+//       await fetch(
+//         `https://yts.mx/api/v2/list_movies.json?minimum_rating=8&sort_by=download_count&limit=50`
+//       )
+//     ).json();
+//     console.log(json.data.movies);
+//     setMovies(json.data.movies);
+//     setLoading(false);
+//   };
+//   useEffect(() => {
+//     getMovies();
+//   }, []);
+//   return (
+//     <div onMouseOver={onMouseOver} className="HomeComponent">
+//       <Nav genre={genre} setGenre={setGenre}/>
+//       {loading ? <LoadingAnimation />:
+//       genre === 'All' ?
+//       <AllMovie
+//         movies={movies} 
+//         genre={genre} 
+//         modalMode={modalMode}
+//         setModalMode={setModalMode}
+//         previewImgSrc={previewImgSrc}
+//         setPreviewImgSrc={setPreviewImgSrc}
+//         previewTitle={previewTitle}
+//         setPreviewTitle={setPreviewTitle}
+//         movieId={movieId}
+//         setMovieId={setMovieId}
+//         coordinate={coordinate}
+//         setCoordinate={setCoordinate}
+//       />: 
+//       <FilterMovie 
+//           movies={movies} 
+//           genre={genre} 
+//           modalMode={modalMode}
+//           setModalMode={setModalMode}
+//           previewImgSrc={previewImgSrc}
+//           setPreviewImgSrc={setPreviewImgSrc}
+//           previewTitle={previewTitle}
+//           setPreviewTitle={setPreviewTitle}
+//           movieId={movieId}
+//           setMovieId={setMovieId}
+//           coordinate={coordinate}
+//           setCoordinate={setCoordinate} 
+//         />  
+//       }
+//     </div>
+//   );
+// }
+
+// export default Home; 
+
+//{<FontAwesomeIcon icon={faChevronRight} className={styles.icon}/>}
