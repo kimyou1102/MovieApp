@@ -1,5 +1,6 @@
 import { useEffect, useState} from "react";
 import { Link } from "react-router-dom";
+import { debounce } from "lodash";
 import Movie from "../components/Movie";
 import styles from "../Home.module.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -50,11 +51,8 @@ function Nav({genre, setGenre}) {
   )
 }
 
-function FilterMovie({movies, genre, modalMode, setModalMode, previewImgSrc, setPreviewImgSrc, previewTitle, setPreviewTitle, movieId, setMovieId, coordinate, setCoordinate}) {
+function FilterMovie({movies, genre, modalMode, setModalMode, previewImgSrc, setPreviewImgSrc, previewTitle, setPreviewTitle, movieId, setMovieId, coordinate, setCoordinate, setIsHovered, debouncedHandleMouseEnter}) {
   const filteredMovies = movies.filter(movie => movie.genres.includes(genre));
-  console.log(previewImgSrc);
-  console.log(previewTitle);
-  console.log(movieId);
   return(
     <div className={styles.filteredWrap}>
       {filteredMovies.length === 0 ? <h2 className={styles.noneInfo}>해당하는 장르의 영화는 없습니다.</h2> 
@@ -73,6 +71,8 @@ function FilterMovie({movies, genre, modalMode, setModalMode, previewImgSrc, set
             setPreviewTitle = {setPreviewTitle}
             setCoordinate = {setCoordinate}
             setMovieId = {setMovieId}
+            setIsHovered = {setIsHovered}
+            debouncedHandleMouseEnter = {debouncedHandleMouseEnter}
         />
         ))}
         <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]-247.625}px`}}>
@@ -86,6 +86,7 @@ function FilterMovie({movies, genre, modalMode, setModalMode, previewImgSrc, set
 
 function Modal({id, src, title}) {
   const [show, setShow] = useState('none');
+  
   const iconMouseOver = () => {
     setShow('block');
   }
@@ -119,14 +120,25 @@ function Home() {
   const [previewImgSrc, setPreviewImgSrc] = useState('');
   const [movieId, setMovieId] =  useState('');
   const [coordinate, setCoordinate] = useState([]);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // console.log(isHovered);
+  const debouncedHandleMouseEnter = debounce(() => setIsHovered(true), 1500);
 
   const onMouseOver = (event) => {
-    if(modalMode && !event.target.className.includes('previewModal') && !event.target.className.includes('poster')) {
-      setModalMode(false);
+    // if(modalMode && !event.target.className.includes('previewModal') && !event.target.className.includes('poster')) {
+    //   setModalMode(false);
+    //   setIsHovered(false);
+    //   debouncedHandleMouseEnter.cancel();
+    // }
+    console.log(isHovered);
+    if(isHovered && !event.target.className.includes('previewModal')) {
+      setIsHovered(false);
+      debouncedHandleMouseEnter.cancel();
     }
+
   }
 
-  console.log(previewTitle);
   const getMovies = async () => {
     const json = await (
       await fetch(
@@ -159,10 +171,13 @@ function Home() {
             setPreviewTitle = {setPreviewTitle}
             setMovieId = {setMovieId}
             setCoordinate = {setCoordinate}
+            setIsHovered = {setIsHovered}
+            isHovered = {isHovered}
+            debouncedHandleMouseEnter = {debouncedHandleMouseEnter}
           />
       ))} 
         <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]-213.40000915527344}px`}}>
-          {modalMode ? <Modal src={previewImgSrc} id={movieId} title={previewTitle} /> : null}
+          {isHovered ? <Modal src={previewImgSrc} id={movieId} title={previewTitle} /> : null}
         </div>
       </div>
       : <FilterMovie 
