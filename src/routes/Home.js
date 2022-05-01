@@ -51,7 +51,7 @@ function Nav({genre, setGenre}) {
   )
 }
 
-function FilterMovie({movies, genre, modalMode, setModalMode, previewImgSrc, setPreviewImgSrc, previewTitle, setPreviewTitle, movieId, setMovieId, coordinate, setCoordinate, setIsHovered, debouncedHandleMouseEnter}) {
+function FilterMovie({movies, genre, modalMode, previewImgSrc, setPreviewImgSrc, previewTitle, setPreviewTitle, movieId, setMovieId, coordinate, setCoordinate, setIsHovered, setModalMode}) {
   const filteredMovies = movies.filter(movie => movie.genres.includes(genre));
   return(
     <div className={styles.filteredWrap}>
@@ -65,14 +65,14 @@ function FilterMovie({movies, genre, modalMode, setModalMode, previewImgSrc, set
             title={movie.title}
             coverImg={movie.medium_cover_image}
             genres={movie.genres}
-            setModalMode = {setModalMode}
             previewTitle = {previewTitle}
             setPreviewImgSrc = {setPreviewImgSrc}
             setPreviewTitle = {setPreviewTitle}
             setCoordinate = {setCoordinate}
             setMovieId = {setMovieId}
             setIsHovered = {setIsHovered}
-            debouncedHandleMouseEnter = {debouncedHandleMouseEnter}
+            // setModalMovie = {setModalMovie}
+            setModalMode = {setModalMode} 
         />
         ))}
         <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]-247.625}px`}}>
@@ -115,30 +115,30 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [movies, setMovies] = useState([]);
   const [genre, setGenre] = useState('All');
-  const [modalMode, setModalMode] = useState(false);
   const [previewTitle, setPreviewTitle] = useState('');
   const [previewImgSrc, setPreviewImgSrc] = useState('');
   const [movieId, setMovieId] =  useState('');
   const [coordinate, setCoordinate] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
+  const [modalMode, setModalMode] = useState(false);
 
-  // console.log(isHovered);
-  const debouncedHandleMouseEnter = debounce(() => setIsHovered(true), 1500);
+  useEffect(() => {
+    if(isHovered) {
+      const notTimer = setTimeout(() => {
+        setModalMode(true);
+      }, 1500);
+      return () => clearTimeout(notTimer);
+    }
+  }, [isHovered])
 
   const onMouseOver = (event) => {
-    // if(modalMode && !event.target.className.includes('previewModal') && !event.target.className.includes('poster')) {
-    //   setModalMode(false);
-    //   setIsHovered(false);
-    //   debouncedHandleMouseEnter.cancel();
-    // }
-    console.log(isHovered);
     if(isHovered && !event.target.className.includes('previewModal')) {
       setIsHovered(false);
-      debouncedHandleMouseEnter.cancel();
+      setModalMode(false);
     }
-
   }
 
+  console.log(isHovered);
   const getMovies = async () => {
     const json = await (
       await fetch(
@@ -165,7 +165,6 @@ function Home() {
             title={movie.title}
             coverImg={movie.medium_cover_image}
             genres={movie.genres}
-            setModalMode = {setModalMode}
             setPreviewImgSrc = {setPreviewImgSrc}
             previewTitle = {previewTitle}
             setPreviewTitle = {setPreviewTitle}
@@ -173,18 +172,16 @@ function Home() {
             setCoordinate = {setCoordinate}
             setIsHovered = {setIsHovered}
             isHovered = {isHovered}
-            debouncedHandleMouseEnter = {debouncedHandleMouseEnter}
+            setModalMode = {setModalMode}
           />
       ))} 
         <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]-213.40000915527344}px`}}>
-          {isHovered ? <Modal src={previewImgSrc} id={movieId} title={previewTitle} /> : null}
+          {modalMode ? <Modal src={previewImgSrc} id={movieId} title={previewTitle} /> : null}
         </div>
       </div>
       : <FilterMovie 
           movies={movies} 
           genre={genre} 
-          modalMode={modalMode}
-          setModalMode={setModalMode}
           previewImgSrc={previewImgSrc}
           setPreviewImgSrc={setPreviewImgSrc}
           previewTitle={previewTitle}
@@ -192,6 +189,9 @@ function Home() {
           movieId={movieId}
           setMovieId={setMovieId}
           coordinate={coordinate}
+          setIsHovered = {setIsHovered}
+          // setModalMovie={setModalMovie}
+          setModalMode = {setModalMode}
           setCoordinate={setCoordinate} 
         />  
       }
