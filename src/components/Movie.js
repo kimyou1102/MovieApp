@@ -7,7 +7,7 @@ function Movie({id, coverImg, title, setPreviewImgSrc, setPreviewTitle, setMovie
   const onMouseOver = (event) => {
     let defaultX = 99;
     let target = event.target;
-    //console.log(target);
+    // console.log(target);
     if(target.tagName === 'IMG') {
       const x = event.target.getBoundingClientRect().left;
       const y = window.pageYOffset + event.target.getBoundingClientRect().top;

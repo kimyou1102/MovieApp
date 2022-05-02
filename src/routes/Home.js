@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import { useEffect, useRef, useState} from "react";
 import { Link } from "react-router-dom";
 import { debounce } from "lodash";
 import Movie from "../components/Movie";
@@ -122,23 +122,31 @@ function Home() {
   const [isHovered, setIsHovered] = useState(false);
   const [modalMode, setModalMode] = useState(false);
 
+  let state = useRef('');
+  let notTimer = '';
+  console.log(isHovered, modalMode);
+
   useEffect(() => {
     if(isHovered) {
-      const notTimer = setTimeout(() => {
+      notTimer = setTimeout(() => {
         setModalMode(true);
       }, 1500);
       return () => clearTimeout(notTimer);
+    } else if(!isHovered && state.current.includes('poster')) {
+      setIsHovered(true);
     }
   }, [isHovered])
 
+
   const onMouseOver = (event) => {
+    state.current = event.target.className;
     if(isHovered && !event.target.className.includes('previewModal')) {
       setIsHovered(false);
       setModalMode(false);
     }
   }
 
-  console.log(isHovered);
+  // console.log(isHovered);
   const getMovies = async () => {
     const json = await (
       await fetch(
