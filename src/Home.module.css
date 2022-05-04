@@ -17,11 +17,28 @@
     to { -webkit-transform: rotate(360deg); }
 }
 
+.btnWrap {
+    /* white-space: nowrap;
+    overflow-x: scroll; */
+}
+
 ul {
-    padding: 0;
     display: flex;
     flex-wrap: wrap;
+    /* padding: 20px;
+    position: relative; */
 }
+
+/* .arrowWrap {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translate(0, -50%);
+} */
+
+/* .rightIcon {
+    height: 36px;
+} */
 
 li {
     display: inline;

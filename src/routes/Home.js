@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState} from "react";
 import { Link } from "react-router-dom";
-import { debounce } from "lodash";
+// import { debounce } from "lodash";
 import Movie from "../components/Movie";
 import styles from "../Home.module.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 function LoadingAnimation() {
   return(
@@ -12,14 +12,18 @@ function LoadingAnimation() {
   )
 }
 
-function Nav({genre, setGenre}) {
+function Nav({setGenre}) {
+  // const [show, setShow] = useState(false);
   const onClick = (event) => {
     if(event.target.tagName === 'LI') {
       setGenre(event.target.innerText);
     }
   }
+  // const onMouseOver = (event) => {
+  //   console.log('dsf');
+  // }
   return(
-    <div>
+    <div className={styles.btnWrap}>
       <ul onClick={onClick}>
         <li className={styles.categoryBtn}>All</li>
         <li className={styles.categoryBtn}>Action</li>
@@ -47,11 +51,12 @@ function Nav({genre, setGenre}) {
         <li className={styles.categoryBtn}>War</li>
         <li className={styles.categoryBtn}>Western</li>
       </ul>
+
     </div>
   )
 }
 
-function FilterMovie({movies, genre, modalMode, previewImgSrc, setPreviewImgSrc, previewTitle, setPreviewTitle, movieId, setMovieId, coordinate, setCoordinate, setIsHovered, setModalMode}) {
+function FilterMovie({movies, genre, modalMode, previewImgSrc, setPreviewImgSrc, previewTitle, setPreviewTitle, movieId, setMovieId, coordinate, setCoordinate, setIsHovered}) {
   const filteredMovies = movies.filter(movie => movie.genres.includes(genre));
   return(
     <div className={styles.filteredWrap}>
@@ -65,14 +70,12 @@ function FilterMovie({movies, genre, modalMode, previewImgSrc, setPreviewImgSrc,
             title={movie.title}
             coverImg={movie.medium_cover_image}
             genres={movie.genres}
-            previewTitle = {previewTitle}
+            // previewTitle = {previewTitle}
             setPreviewImgSrc = {setPreviewImgSrc}
             setPreviewTitle = {setPreviewTitle}
             setCoordinate = {setCoordinate}
             setMovieId = {setMovieId}
             setIsHovered = {setIsHovered}
-            // setModalMovie = {setModalMovie}
-            setModalMode = {setModalMode} 
         />
         ))}
         <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]-247.625}px`}}>
@@ -123,12 +126,11 @@ function Home() {
   const [modalMode, setModalMode] = useState(false);
 
   let state = useRef('');
-  let notTimer = '';
   console.log(isHovered, modalMode);
 
   useEffect(() => {
     if(isHovered) {
-      notTimer = setTimeout(() => {
+      const notTimer = setTimeout(() => {
         setModalMode(true);
       }, 1500);
       return () => clearTimeout(notTimer);
@@ -137,8 +139,8 @@ function Home() {
     }
   }, [isHovered])
 
-
   const onMouseOver = (event) => {
+    // console.log('마우스오버');
     state.current = event.target.className;
     if(isHovered && !event.target.className.includes('previewModal')) {
       setIsHovered(false);
@@ -146,7 +148,6 @@ function Home() {
     }
   }
 
-  // console.log(isHovered);
   const getMovies = async () => {
     const json = await (
       await fetch(
@@ -162,7 +163,7 @@ function Home() {
   }, []);
   return (
     <div onMouseOver={onMouseOver} className="HomeComponent">
-      <Nav genre={genre} setGenre={setGenre}/>
+      <Nav setGenre={setGenre}/>
       {loading ? <LoadingAnimation />:
       genre === 'All' ?
       <div className={styles.wrap} onMouseOver={onMouseOver}>
@@ -173,14 +174,13 @@ function Home() {
             title={movie.title}
             coverImg={movie.medium_cover_image}
             genres={movie.genres}
+            // previewTitle = {previewTitle}
             setPreviewImgSrc = {setPreviewImgSrc}
-            previewTitle = {previewTitle}
             setPreviewTitle = {setPreviewTitle}
             setMovieId = {setMovieId}
             setCoordinate = {setCoordinate}
             setIsHovered = {setIsHovered}
-            isHovered = {isHovered}
-            setModalMode = {setModalMode}
+            // isHovered = {isHovered}
           />
       ))} 
         <div className={styles.previewModalWrapper} style={{left: `${coordinate[0]}px`, top: `${coordinate[1]-213.40000915527344}px`}}>
@@ -191,16 +191,15 @@ function Home() {
           movies={movies} 
           genre={genre} 
           previewImgSrc={previewImgSrc}
-          setPreviewImgSrc={setPreviewImgSrc}
           previewTitle={previewTitle}
+          setPreviewImgSrc={setPreviewImgSrc}
           setPreviewTitle={setPreviewTitle}
-          movieId={movieId}
           setMovieId={setMovieId}
-          coordinate={coordinate}
           setIsHovered = {setIsHovered}
-          // setModalMovie={setModalMovie}
-          setModalMode = {setModalMode}
           setCoordinate={setCoordinate} 
+          movieId={movieId}
+          coordinate={coordinate}
+          modalMode = {modalMode}
         />  
       }
     </div>
@@ -306,4 +305,7 @@ export default Home;
 
 // export default Home; 
 
-//{<FontAwesomeIcon icon={faChevronRight} className={styles.icon}/>}
+
+{/* <div className={styles.arrowWrap}> */}
+  {/* <FontAwesomeIcon icon={faChevronRight} className={styles.rightIcon}/> */}
+// </div>
