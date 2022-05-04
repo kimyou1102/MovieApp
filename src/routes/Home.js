@@ -102,11 +102,11 @@ function Modal({id, src, title}) {
   }
   return(
     <div className={styles.previewModal}>
-      <img className={styles.previewModal_img} src={src} />
+      <img className={styles.previewModal_img} src={src} alt={title}/>
       <div onMouseOver={onMouseOver} className={styles.previewModal_infoWrap}>
         <h3 className={styles.previewModal_title}>{title}</h3>
         <div onMouseOver={iconMouseOver} className={styles.previewModal_infoIconWrap}>
-          <Link to={`/movie/${id}`}><img className={styles.previewModal_infoIcon} src="info.png"/></Link>
+          <Link to={`/movie/${id}`}><img className={styles.previewModal_infoIcon} src="info.png" alt="infoIcon"/></Link>
           <span className={styles.previewModal_infoText} style={{display: show}}>View Details</span>
         </div>
       </div>
@@ -306,6 +306,6 @@ export default Home;
 // export default Home; 
 
 
-{/* <div className={styles.arrowWrap}> */}
-  {/* <FontAwesomeIcon icon={faChevronRight} className={styles.rightIcon}/> */}
+/* <div className={styles.arrowWrap}> */
+/* <FontAwesomeIcon icon={faChevronRight} className={styles.rightIcon}/> */
 // </div>
