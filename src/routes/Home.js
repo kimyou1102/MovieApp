@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 // import { debounce } from "lodash";
 import Movie from "../components/Movie";
 import styles from "../Home.module.css";
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 function LoadingAnimation() {
   return(
@@ -14,44 +15,75 @@ function LoadingAnimation() {
 
 function Nav({setGenre}) {
   // const [show, setShow] = useState(false);
+  const scrollRef = useRef(null);
+  const right = useRef(12);
+  const left = useRef(12);
+
   const onClick = (event) => {
     if(event.target.tagName === 'LI') {
       setGenre(event.target.innerText);
     }
   }
-  // const onMouseOver = (event) => {
-  //   console.log('dsf');
-  // }
-  return(
-    <div className={styles.btnWrap}>
-      <ul onClick={onClick}>
-        <li className={styles.categoryBtn}>All</li>
-        <li className={styles.categoryBtn}>Action</li>
-        <li className={styles.categoryBtn}>Adventure</li>
-        <li className={styles.categoryBtn}>Animation</li>
-        <li className={styles.categoryBtn}>Biography</li>
-        <li className={styles.categoryBtn}>Comedy</li>
-        <li className={styles.categoryBtn}>Crime</li>
-        <li className={styles.categoryBtn}>Documentary</li>
-        <li className={styles.categoryBtn}>Drama</li>
-        <li className={styles.categoryBtn}>Family</li>
-        <li className={styles.categoryBtn}>Fantasy</li>
-        <li className={styles.categoryBtn}>Film Noir</li>
-        <li className={styles.categoryBtn}>History</li>
-        <li className={styles.categoryBtn}>Horror</li>
-        <li className={styles.categoryBtn}>Music</li>
-        <li className={styles.categoryBtn}>Musical</li>
-        <li className={styles.categoryBtn}>Mystery</li>
-        <li className={styles.categoryBtn}>Romance</li>
-        <li className={styles.categoryBtn}>Sci-Fi</li>
-        <li className={styles.categoryBtn}>Short Film</li>
-        <li className={styles.categoryBtn}>Sport</li>
-        <li className={styles.categoryBtn}>Superhero</li>
-        <li className={styles.categoryBtn}>Thriller</li>
-        <li className={styles.categoryBtn}>War</li>
-        <li className={styles.categoryBtn}>Western</li>
-      </ul>
 
+  const onRightClick = (event) => {
+    let num = 350;
+    scrollRef.current.scrollLeft += num;
+    console.log(event.target);
+    if(event.target.tagName === 'svg') {
+      right.current -= num;
+      left.current += num;
+      event.target.parentNode.style.right = `${right.current}px`;
+      event.target.parentNode.parentNode.children[0].style.left = `${left.current}px`;
+    } else if(event.target.tagName === 'path') {
+      right.current -= num;
+      left.current += num;
+      event.target.parentNode.parentNode.style.right = `${right.current}px`;
+      event.target.parentNode.parentNode.parentNode.children[0].style.left = `${left.current}px`;
+    }
+  }
+  const lastMouseOver = (event) => {
+    console.log(event.target.getBoundingClientRect().right);
+    console.log(window.pageXOffset + event.target.getBoundingClientRect().right);
+  }
+  return(
+    <div className={styles.btnWrap} ref={scrollRef}>
+      <div>
+        <ul onClick={onClick}>
+          <li className={styles.categoryBtn}>All</li>
+          <li className={styles.categoryBtn}>Action</li>
+          <li className={styles.categoryBtn} onMouseOver={lastMouseOver}>Adventure</li>
+          <li className={styles.categoryBtn}>Animation</li>
+          <li className={styles.categoryBtn}>Biography</li>
+          <li className={styles.categoryBtn}>Comedy</li>
+          <li className={styles.categoryBtn}>Crime</li>
+          <li className={styles.categoryBtn}>Documentary</li>
+          <li className={styles.categoryBtn}>Drama</li>
+          <li className={styles.categoryBtn}>Family</li>
+          <li className={styles.categoryBtn}>Fantasy</li>
+          <li className={styles.categoryBtn}>Film Noir</li>
+          <li className={styles.categoryBtn}>History</li>
+          <li className={styles.categoryBtn}>Horror</li>
+          <li className={styles.categoryBtn}>Music</li>
+          <li className={styles.categoryBtn}>Musical</li>
+          <li className={styles.categoryBtn}>Mystery</li>
+          <li className={styles.categoryBtn}>Romance</li>
+          <li className={styles.categoryBtn}>Sci-Fi</li>
+          <li className={styles.categoryBtn}>Short Film</li>
+          <li className={styles.categoryBtn}>Sport</li>
+          <li className={styles.categoryBtn}>Superhero</li>
+          <li className={styles.categoryBtn} onMouseOver={lastMouseOver}>Thriller</li>
+          <li className={styles.categoryBtn} onMouseOver={lastMouseOver}>War</li>
+          <li className={styles.categoryBtn} onMouseOver={lastMouseOver}>Western</li>
+        </ul>
+        <div className={styles.scrollWrap}>
+          <div className={styles.leftIconWrap}>
+              <FontAwesomeIcon icon={faChevronLeft} className={styles.leftIcon}/>
+          </div>
+          <div className={styles.rightIconWrap} onClick={onRightClick} style={{right: `${right.current}px`}}>
+            <FontAwesomeIcon icon={faChevronRight} className={styles.rightIcon}/>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

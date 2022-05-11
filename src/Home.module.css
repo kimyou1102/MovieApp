@@ -18,27 +18,46 @@
 }
 
 .btnWrap {
-    /* white-space: nowrap;
-    overflow-x: scroll; */
+    white-space: nowrap;
+    overflow-x: scroll;
+    position: relative;
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.btnWrap::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 ul {
-    display: flex;
-    flex-wrap: wrap;
-    /* padding: 20px;
-    position: relative; */
+    /* display: flex;
+    flex-wrap: wrap; */
+    padding: 20px;
 }
 
-/* .arrowWrap {
+.leftIconWrap {
     position: absolute;
-    right: 12px;
+    left: 12px;
     top: 50%;
     transform: translate(0, -50%);
-} */
+}
 
-/* .rightIcon {
+.rightIconWrap {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translate(0, -50%);
+}
+
+.leftIcon {
     height: 36px;
-} */
+    cursor: pointer;
+}
+
+.rightIcon {
+    height: 36px;
+    cursor: pointer;
+}
 
 li {
     display: inline;
