@@ -18,21 +18,19 @@
 }
 
 .btnWrap {
+    position: relative;
+}
+
+ul {
     white-space: nowrap;
     overflow-x: scroll;
-    position: relative;
+    padding: 20px;
     -ms-overflow-style: none; /* IE, Edge */
     scrollbar-width: none; /* Firefox */
 }
 
-.btnWrap::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-}
-
-ul {
-    /* display: flex;
-    flex-wrap: wrap; */
-    padding: 20px;
+ul::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .leftIconWrap {

@@ -14,10 +14,7 @@ function LoadingAnimation() {
 }
 
 function Nav({setGenre}) {
-  // const [show, setShow] = useState(false);
   const scrollRef = useRef(null);
-  const right = useRef(12);
-  const left = useRef(12);
 
   const onClick = (event) => {
     if(event.target.tagName === 'LI') {
@@ -25,33 +22,25 @@ function Nav({setGenre}) {
     }
   }
 
-  const onRightClick = (event) => {
-    let num = 350;
+  let num = 350;
+  const onRightClick = () => {
     scrollRef.current.scrollLeft += num;
-    console.log(event.target);
-    if(event.target.tagName === 'svg') {
-      right.current -= num;
-      left.current += num;
-      event.target.parentNode.style.right = `${right.current}px`;
-      event.target.parentNode.parentNode.children[0].style.left = `${left.current}px`;
-    } else if(event.target.tagName === 'path') {
-      right.current -= num;
-      left.current += num;
-      event.target.parentNode.parentNode.style.right = `${right.current}px`;
-      event.target.parentNode.parentNode.parentNode.children[0].style.left = `${left.current}px`;
-    }
   }
-  const lastMouseOver = (event) => {
-    console.log(event.target.getBoundingClientRect().right);
-    console.log(window.pageXOffset + event.target.getBoundingClientRect().right);
+
+  const onLeftClick = () => {
+    scrollRef.current.scrollLeft -= num;
   }
+
   return(
-    <div className={styles.btnWrap} ref={scrollRef}>
+    <div className={styles.btnWrap}>
       <div>
-        <ul onClick={onClick}>
+        <div className={styles.leftIconWrap} onClick={onLeftClick}>
+         <FontAwesomeIcon icon={faChevronLeft} className={styles.leftIcon}/>
+        </div>
+        <ul onClick={onClick} ref={scrollRef}>
           <li className={styles.categoryBtn}>All</li>
           <li className={styles.categoryBtn}>Action</li>
-          <li className={styles.categoryBtn} onMouseOver={lastMouseOver}>Adventure</li>
+          <li className={styles.categoryBtn}>Adventure</li>
           <li className={styles.categoryBtn}>Animation</li>
           <li className={styles.categoryBtn}>Biography</li>
           <li className={styles.categoryBtn}>Comedy</li>
@@ -71,17 +60,12 @@ function Nav({setGenre}) {
           <li className={styles.categoryBtn}>Short Film</li>
           <li className={styles.categoryBtn}>Sport</li>
           <li className={styles.categoryBtn}>Superhero</li>
-          <li className={styles.categoryBtn} onMouseOver={lastMouseOver}>Thriller</li>
-          <li className={styles.categoryBtn} onMouseOver={lastMouseOver}>War</li>
-          <li className={styles.categoryBtn} onMouseOver={lastMouseOver}>Western</li>
+          <li className={styles.categoryBtn}>Thriller</li>
+          <li className={styles.categoryBtn}>War</li>
+          <li className={styles.categoryBtn}>Western</li>
         </ul>
-        <div className={styles.scrollWrap}>
-          <div className={styles.leftIconWrap}>
-              <FontAwesomeIcon icon={faChevronLeft} className={styles.leftIcon}/>
-          </div>
-          <div className={styles.rightIconWrap} onClick={onRightClick} style={{right: `${right.current}px`}}>
+        <div className={styles.rightIconWrap} onClick={onRightClick}>
             <FontAwesomeIcon icon={faChevronRight} className={styles.rightIcon}/>
-          </div>
         </div>
       </div>
     </div>
@@ -240,6 +224,15 @@ function Home() {
 
 export default Home; 
 
+
+// <div className={styles.scrollWrap}>
+//           <div className={styles.leftIconWrap}>
+//               <FontAwesomeIcon icon={faChevronLeft} className={styles.leftIcon}/>
+//           </div>
+//           <div className={styles.rightIconWrap} onClick={onRightClick} style={{right: `${right.current}px`}}>
+//             <FontAwesomeIcon icon={faChevronRight} className={styles.rightIcon}/>
+//           </div>
+//         </div>
 
 
 // function AllMovie({movies, genre, modalMode, setModalMode, previewImgSrc, setPreviewImgSrc, previewTitle, setPreviewTitle, movieId, setMovieId, coordinate, setCoordinate}) {
